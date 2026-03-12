@@ -164,7 +164,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"hero_subheadline" varchar DEFAULT 'שירות רכבי יוקרה עם נהג צמוד לאירועים מיוחדים. חתונות, ימי הולדת, אירועים עסקיים ועוד.' NOT NULL,
   	"hero_cta" varchar DEFAULT 'הזמינו עכשיו' NOT NULL,
   	"hero_cta_href" varchar DEFAULT '#contact' NOT NULL,
-  	"hero_background_image" varchar DEFAULT '/images/hero-car.jpg' NOT NULL,
+  	"hero_background_image_id" integer NOT NULL,
   	"fleet_section_title" varchar DEFAULT 'צי הרכבים שלנו' NOT NULL,
   	"fleet_section_subtitle" varchar DEFAULT 'מבחר רכבי יוקרה מהמובילים בעולם, מתוחזקים ברמה הגבוהה ביותר.' NOT NULL,
   	"service_section_title" varchar DEFAULT 'השירות שלנו' NOT NULL,
@@ -207,6 +207,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "site_config_service_features" ADD CONSTRAINT "site_config_service_features_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."site_config"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "site_config_testimonials_items" ADD CONSTRAINT "site_config_testimonials_items_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."site_config"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "site_config_footer_links" ADD CONSTRAINT "site_config_footer_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."site_config"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "site_config" ADD CONSTRAINT "site_config_hero_background_image_id_media_id_fk" FOREIGN KEY ("hero_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "site_config_rels" ADD CONSTRAINT "site_config_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."site_config"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "site_config_rels" ADD CONSTRAINT "site_config_rels_fleet_vehicles_fk" FOREIGN KEY ("fleet_vehicles_id") REFERENCES "public"."fleet_vehicles"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "site_seo" ADD CONSTRAINT "site_seo_og_image_id_media_id_fk" FOREIGN KEY ("og_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
@@ -251,6 +252,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "site_config_testimonials_items_parent_id_idx" ON "site_config_testimonials_items" USING btree ("_parent_id");
   CREATE INDEX "site_config_footer_links_order_idx" ON "site_config_footer_links" USING btree ("_order");
   CREATE INDEX "site_config_footer_links_parent_id_idx" ON "site_config_footer_links" USING btree ("_parent_id");
+  CREATE INDEX "site_config_hero_hero_background_image_idx" ON "site_config" USING btree ("hero_background_image_id");
   CREATE INDEX "site_config_rels_order_idx" ON "site_config_rels" USING btree ("order");
   CREATE INDEX "site_config_rels_parent_idx" ON "site_config_rels" USING btree ("parent_id");
   CREATE INDEX "site_config_rels_path_idx" ON "site_config_rels" USING btree ("path");

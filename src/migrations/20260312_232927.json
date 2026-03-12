@@ -1720,12 +1720,11 @@
           "notNull": true,
           "default": "'#contact'"
         },
-        "hero_background_image": {
-          "name": "hero_background_image",
-          "type": "varchar",
+        "hero_background_image_id": {
+          "name": "hero_background_image_id",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'/images/hero-car.jpg'"
+          "notNull": true
         },
         "fleet_section_title": {
           "name": "fleet_section_title",
@@ -1782,8 +1781,38 @@
           "notNull": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
+      "indexes": {
+        "site_config_hero_hero_background_image_idx": {
+          "name": "site_config_hero_hero_background_image_idx",
+          "columns": [
+            {
+              "expression": "hero_background_image_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "site_config_hero_background_image_id_media_id_fk": {
+          "name": "site_config_hero_background_image_id_media_id_fk",
+          "tableFrom": "site_config",
+          "tableTo": "media",
+          "columnsFrom": [
+            "hero_background_image_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -2045,6 +2074,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "2a5561ad-c929-444a-8937-29e234c0cd14",
+  "id": "78c34fbf-508f-4117-9e97-121bf9af02f7",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
