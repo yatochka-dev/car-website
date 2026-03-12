@@ -8,6 +8,9 @@ import { ContactSection } from '@/components/sections/contact-section'
 import { payload } from '@/lib/p'
 import { FleetVehicle, SiteConfig } from '@/payload-types'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /**
  * Main Page
  * ---------

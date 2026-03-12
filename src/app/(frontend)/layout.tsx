@@ -5,6 +5,9 @@ import './globals.css'
 import { payload } from '@/lib/p'
 import { Media } from '@/payload-types'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const heebo = Heebo({
   subsets: ['hebrew', 'latin'],
   variable: '--font-heebo',
