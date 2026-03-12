@@ -139,9 +139,9 @@ export const SiteConfig: GlobalConfig = {
         },
         {
           name: 'backgroundImage',
-          type: 'text',
+          type: 'relationship',
           required: true,
-          defaultValue: '/images/hero-car.jpg',
+          relationTo: 'media',
         },
       ],
     },

@@ -412,7 +412,7 @@ export interface SiteConfig {
     subheadline: string;
     cta: string;
     ctaHref: string;
-    backgroundImage: string;
+    backgroundImage: number | Media;
   };
   fleet: {
     sectionTitle: string;
