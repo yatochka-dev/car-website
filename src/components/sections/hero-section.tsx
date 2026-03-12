@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { SiteConfig } from '@/payload-types'
+import { Media, SiteConfig } from '@/payload-types'
 
 export function HeroSection(content: SiteConfig['hero']) {
   return (
@@ -10,7 +10,7 @@ export function HeroSection(content: SiteConfig['hero']) {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={content.backgroundImage}
+          src={(content.backgroundImage as Media).url as string}
           alt="Luxury vehicle"
           fill
           className="object-cover"
