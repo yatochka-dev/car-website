@@ -1,59 +1,50 @@
-import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
-import { getPayload } from 'payload'
-import React from 'react'
-import { fileURLToPath } from 'url'
+import { SiteHeader } from '@/components/layout/site-header'
+import { SiteFooter } from '@/components/layout/site-footer'
+import { HeroSection } from '@/components/sections/hero-section'
+import { FleetSection } from '@/components/sections/fleet-section'
+import { ServiceSection } from '@/components/sections/service-section'
+import { TestimonialsSection } from '@/components/sections/testimonials-section'
+import { ContactSection } from '@/components/sections/contact-section'
+import { payload } from '@/lib/p'
+import { FleetVehicle, SiteConfig } from '@/payload-types'
 
-import config from '@/payload.config'
-import './styles.css'
-
+/**
+ * Main Page
+ * ---------
+ * Composes all sections using data from siteConfig.
+ * Each section is a self-contained component receiving only the data it needs.
+ *
+ * CMS Integration: Replace `siteConfig` imports with server-side data fetching
+ * (e.g., `await sanity.fetch(...)`) and the page structure remains identical.
+ */
 export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
-
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
+  const p = await payload()
+  const siteConfig = await p.findGlobal({
+    slug: 'site-config',
+    depth: 100,
+  })
 
   return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
-          <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Go to admin panel
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Documentation
-          </a>
-        </div>
-      </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
-      </div>
+    <div className="min-h-screen bg-background">
+      <SiteHeader {...siteConfig} />
+
+      <main>
+        <HeroSection {...siteConfig.hero} />
+
+        <FleetSection
+          {...(siteConfig.fleet as Omit<SiteConfig['fleet'], 'vehicles'> & {
+            vehicles: FleetVehicle[]
+          })}
+        />
+
+        <ServiceSection {...siteConfig.service} />
+
+        <TestimonialsSection {...siteConfig.testimonials} />
+
+        <ContactSection contact={siteConfig.contact} submitted={false} />
+      </main>
+
+      <SiteFooter {...siteConfig} />
     </div>
   )
 }

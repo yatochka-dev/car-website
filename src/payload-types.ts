@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'fleet-vehicles': FleetVehicle;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,18 +79,28 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'fleet-vehicles': FleetVehiclesSelect<false> | FleetVehiclesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-config': SiteConfig;
+    'site-seo': SiteSeo;
+  };
+  globalsSelect: {
+    'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
+    'site-seo': SiteSeoSelect<false> | SiteSeoSelect<true>;
+  };
   locale: null;
+  widgets: {
+    collections: CollectionsWidget;
+  };
   user: User;
   jobs: {
     tasks: unknown;
@@ -119,7 +130,7 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -144,7 +155,7 @@ export interface User {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -159,11 +170,37 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * רכבי צי + טווחי תאריכים תפוסים
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fleet-vehicles".
+ */
+export interface FleetVehicle {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  seats: number;
+  tags: {
+    tag: string;
+    id?: string | null;
+  }[];
+  bookings: {
+    startDate: string;
+    endDate: string;
+    customerName?: string | null;
+    notes?: string | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -180,20 +217,24 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'fleet-vehicles';
+        value: string | FleetVehicle;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -203,10 +244,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -226,7 +267,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -274,6 +315,34 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fleet-vehicles_select".
+ */
+export interface FleetVehiclesSelect<T extends boolean = true> {
+  id?: T;
+  name?: T;
+  description?: T;
+  image?: T;
+  seats?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  bookings?:
+    | T
+    | {
+        startDate?: T;
+        endDate?: T;
+        customerName?: T;
+        notes?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -311,6 +380,212 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Single source of truth for site text, links, and metadata.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-config".
+ */
+export interface SiteConfig {
+  id: number;
+  tg_chat_id: string;
+  brand: {
+    name: string;
+    tagline: string;
+  };
+  nav: {
+    label: string;
+    href: string;
+    id?: string | null;
+  }[];
+  contact: {
+    phone: string;
+    phoneDisplay: string;
+    whatsapp: string;
+    whatsappDisplay: string;
+    email: string;
+    address: string;
+  };
+  hero: {
+    headline: string;
+    subheadline: string;
+    cta: string;
+    ctaHref: string;
+    backgroundImage: string;
+  };
+  fleet: {
+    sectionTitle: string;
+    sectionSubtitle: string;
+    /**
+     * בחר רכבים שיוצגו באתר
+     */
+    vehicles: (string | FleetVehicle)[];
+  };
+  service: {
+    sectionTitle: string;
+    sectionSubtitle: string;
+    features: {
+      id: string;
+      icon: 'crown' | 'shield' | 'clock' | 'star';
+      title: string;
+      description: string;
+    }[];
+  };
+  testimonials: {
+    sectionTitle: string;
+    items: {
+      id: string;
+      name: string;
+      text: string;
+      rating: number;
+    }[];
+  };
+  footer: {
+    copyright: string;
+    links: {
+      label: string;
+      href: string;
+      id?: string | null;
+    }[];
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-seo".
+ */
+export interface SiteSeo {
+  id: number;
+  siteName: string;
+  /**
+   * Used as the base title for the website
+   */
+  title: string;
+  /**
+   * Recommended length: 150–160 characters
+   */
+  description: string;
+  ogImage?: (number | null) | Media;
+  /**
+   * Keep NOINDEX until the final domain launches
+   */
+  robots?: ('index' | 'noindex') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-config_select".
+ */
+export interface SiteConfigSelect<T extends boolean = true> {
+  tg_chat_id?: T;
+  brand?:
+    | T
+    | {
+        name?: T;
+        tagline?: T;
+      };
+  nav?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        phone?: T;
+        phoneDisplay?: T;
+        whatsapp?: T;
+        whatsappDisplay?: T;
+        email?: T;
+        address?: T;
+      };
+  hero?:
+    | T
+    | {
+        headline?: T;
+        subheadline?: T;
+        cta?: T;
+        ctaHref?: T;
+        backgroundImage?: T;
+      };
+  fleet?:
+    | T
+    | {
+        sectionTitle?: T;
+        sectionSubtitle?: T;
+        vehicles?: T;
+      };
+  service?:
+    | T
+    | {
+        sectionTitle?: T;
+        sectionSubtitle?: T;
+        features?:
+          | T
+          | {
+              id?: T;
+              icon?: T;
+              title?: T;
+              description?: T;
+            };
+      };
+  testimonials?:
+    | T
+    | {
+        sectionTitle?: T;
+        items?:
+          | T
+          | {
+              id?: T;
+              name?: T;
+              text?: T;
+              rating?: T;
+            };
+      };
+  footer?:
+    | T
+    | {
+        copyright?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              href?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-seo_select".
+ */
+export interface SiteSeoSelect<T extends boolean = true> {
+  siteName?: T;
+  title?: T;
+  description?: T;
+  ogImage?: T;
+  robots?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

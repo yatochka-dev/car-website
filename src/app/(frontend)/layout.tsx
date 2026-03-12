@@ -1,19 +1,53 @@
-import React from 'react'
-import './styles.css'
+import type { Metadata, Viewport } from 'next'
+import { Heebo } from 'next/font/google'
+// import { Analytics } from "@vercel/analytics/next"
+import './globals.css'
+import { payload } from '@/lib/p'
+import { Media } from '@/payload-types'
 
-export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+const heebo = Heebo({
+  subsets: ['hebrew', 'latin'],
+  variable: '--font-heebo',
+  display: 'swap',
+})
+
+export const viewport: Viewport = {
+  themeColor: '#1a1a2e',
+  width: 'device-width',
+  initialScale: 1,
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
-
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
+    <html lang="he" dir="rtl" className={heebo.variable}>
+      <body className="font-sans antialiased">
+        {children}
+        {/*<Analytics />*/}
       </body>
     </html>
   )
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const p = await payload()
+  const seo = await p.findGlobal({ slug: 'site-seo' })
+
+  return {
+    title: seo.title,
+    description: seo.description,
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      siteName: seo.siteName,
+      images: [
+        {
+          url: (seo.ogImage as Media).url as string,
+        },
+      ],
+    },
+  }
 }
