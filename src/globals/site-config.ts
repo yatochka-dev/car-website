@@ -14,6 +14,7 @@ export const SiteConfig: GlobalConfig = {
   fields: [
     {
       name: 'tg_chat_id',
+      label: 'Telegram Chat ID',
       type: 'text',
       required: true,
       defaultValue: '5918252925',
@@ -304,8 +305,8 @@ export const SiteConfig: GlobalConfig = {
           type: 'array',
           required: true,
           defaultValue: [
-            { label: 'תנאי שימוש', href: '#' },
-            { label: 'מדיניות פרטיות', href: '#' },
+            { label: 'תנאי שימוש', href: '/use' },
+            { label: 'מדיניות פרטיות', href: '/privacy' },
           ],
           fields: [
             { name: 'label', type: 'text', required: true },

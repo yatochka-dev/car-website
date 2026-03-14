@@ -2,6 +2,7 @@ import { Phone, Mail, MapPin, Send } from 'lucide-react'
 import { SectionHeading } from '@/components/ui/section-heading'
 import type { SiteConfig } from '@/payload-types'
 import { submitContactForm } from '@/app/actions/contact'
+import Link from 'next/link'
 
 type ContactSectionProps = {
   contact: SiteConfig['contact']
@@ -84,6 +85,17 @@ export function ContactSection({ contact, submitted = false }: ContactSectionPro
               <Send className="h-4 w-4" />
               <span>שליחה</span>
             </button>
+            <p className={'text-muted-foreground'}>
+              שליחת הטופס מהווה הסכמה ל־
+              <Link href={'/use'} className={'underline'}>
+                תנאי השימוש
+              </Link>{' '}
+              ול
+              <Link href={'/privacy'} className={'underline'}>
+                מדיניות הפרטיות של האתר
+              </Link>
+              .
+            </p>
 
             {submitted && (
               <p className="text-center text-sm font-medium text-primary">

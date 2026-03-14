@@ -28,26 +28,20 @@ export default async function HomePage() {
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader {...siteConfig} />
+    <>
+      <HeroSection {...siteConfig.hero} />
 
-      <main>
-        <HeroSection {...siteConfig.hero} />
+      <FleetSection
+        {...(siteConfig.fleet as Omit<SiteConfig['fleet'], 'vehicles'> & {
+          vehicles: FleetVehicle[]
+        })}
+      />
 
-        <FleetSection
-          {...(siteConfig.fleet as Omit<SiteConfig['fleet'], 'vehicles'> & {
-            vehicles: FleetVehicle[]
-          })}
-        />
+      <ServiceSection {...siteConfig.service} />
 
-        <ServiceSection {...siteConfig.service} />
+      <TestimonialsSection {...siteConfig.testimonials} />
 
-        <TestimonialsSection {...siteConfig.testimonials} />
-
-        <ContactSection contact={siteConfig.contact} submitted={false} />
-      </main>
-
-      <SiteFooter {...siteConfig} />
-    </div>
+      <ContactSection contact={siteConfig.contact} submitted={false} />
+    </>
   )
 }

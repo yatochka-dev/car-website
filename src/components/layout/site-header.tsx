@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Menu, X, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { SiteConfig } from '@/payload-types'
+import Link from 'next/link'
 
 export function SiteHeader(config: SiteConfig) {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -37,9 +38,12 @@ export function SiteHeader(config: SiteConfig) {
             onClick={() => scrollToSection('#hero')}
             className="flex items-center gap-2 group"
           >
-            <span className="text-2xl font-bold text-primary transition-colors group-hover:text-gold-light">
+            <Link
+              href={'/'}
+              className="text-2xl font-bold text-primary transition-colors group-hover:text-gold-light"
+            >
               {config.brand.name}
-            </span>
+            </Link>
           </button>
 
           {/* Desktop Nav */}

@@ -11,5 +11,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 1,
     },
+    {
+      url: new URL('use', webURL).toString(),
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.1,
+    },
+    {
+      url: new URL('privacy', webURL).toString(),
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.1,
+    },
   ]
 }
