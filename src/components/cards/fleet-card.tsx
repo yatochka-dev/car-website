@@ -3,7 +3,15 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { Users, Calendar, CheckCircle, XCircle, X, Car } from 'lucide-react'
-import { FleetVehicle } from '@/payload-types'
+import { FleetVehicle, Media } from '@/payload-types'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '../ui/carousel'
+import { log } from 'console'
 
 interface FleetCardProps {
   vehicle: FleetVehicle
@@ -12,43 +20,48 @@ interface FleetCardProps {
 
 // ─── Availability Check Logic ────────────────────────────────────────────────
 
+function normalizeDate(value: string): string {
+  const directMatch = value.match(/^\d{4}-\d{2}-\d{2}/)
+  if (directMatch) return directMatch[0]
+
+  const d = new Date(value)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
 function checkAvailability(
   bookings: {
-    startDate: string
-    endDate: string
+    date: string
     customerName?: string | null
     notes?: string | null
     id?: string | null
   }[],
-  startDate: string,
-  endDate: string,
+  date: string,
 ): boolean {
-  const requestStart = new Date(startDate)
-  const requestEnd = new Date(endDate)
+  const selectedDate = normalizeDate(date)
 
-  for (const booking of bookings) {
-    const bookingStart = new Date(booking.startDate)
-    const bookingEnd = new Date(booking.endDate)
+  for (const booking of bookings ?? []) {
+    const bookingDate = normalizeDate(booking.date)
+    console.log(selectedDate)
+    console.log(bookingDate)
 
-    // Check if date ranges overlap
-    if (requestStart <= bookingEnd && requestEnd >= bookingStart) {
-      return false // Not available - dates overlap
+    if (selectedDate === bookingDate) {
+      return false
     }
   }
 
-  return true // Available
+  return true
 }
 
 function getAvailableVehicles(
   vehicles: FleetVehicle[],
-  startDate: string,
-  endDate: string,
+  date: string,
   excludeId: string,
 ): FleetVehicle[] {
-  console.log(vehicles)
-  return vehicles.filter(
-    (v) => v.id !== excludeId && checkAvailability(v.bookings, startDate, endDate),
-  )
+  return vehicles.filter((v) => v.id !== excludeId && checkAvailability(v.bookings ?? [], date))
 }
 
 function formatDate(dateString: string): string {
@@ -65,26 +78,20 @@ interface AlternativesDialogProps {
   isOpen: boolean
   onClose: () => void
   availableVehicles: FleetVehicle[]
-  startDate: string
-  endDate: string
+  date: string
 }
 
-function AlternativesDialog({
-  isOpen,
-  onClose,
-  availableVehicles,
-  startDate,
-  endDate,
-}: AlternativesDialogProps) {
-  // Handle escape key
+function AlternativesDialog({ isOpen, onClose, availableVehicles, date }: AlternativesDialogProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
+
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
     }
+
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = ''
@@ -113,11 +120,9 @@ function AlternativesDialog({
         <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
             <h2 id="alternatives-title" className="text-xl font-bold text-foreground">
-              רכבים פנויים בתאריכים
+              רכבים פנויים בתאריך
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {formatDate(startDate)} - {formatDate(endDate)}
-            </p>
+            <p className="text-sm text-muted-foreground mt-1">{formatDate(date)}</p>
           </div>
           <button
             onClick={onClose}
@@ -133,9 +138,9 @@ function AlternativesDialog({
           {availableVehicles.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Car className="w-12 h-12 text-muted-foreground mb-4" />
-              <p className="text-lg font-medium text-foreground">אין רכבים פנויים בתאריכים אלו</p>
+              <p className="text-lg font-medium text-foreground">אין רכבים פנויים בתאריך זה</p>
               <p className="text-sm text-muted-foreground mt-1">
-                נסו לבחור תאריכים אחרים או צרו קשר לעזרה
+                נסו לבחור תאריך אחר או צרו קשר לעזרה
               </p>
             </div>
           ) : (
@@ -147,7 +152,44 @@ function AlternativesDialog({
                 >
                   {/* Image */}
                   <div className="relative w-32 h-20 rounded-lg overflow-hidden shrink-0">
-                    <Image src={v.image} alt={v.name} fill className="object-cover" sizes="128px" />
+                    <Carousel
+                      dir="ltr"
+                      opts={{
+                        loop: true,
+                        direction: 'ltr',
+                      }}
+                      className="w-full"
+                    >
+                      <CarouselContent className="-ml-0">
+                        {(v.images?.length ? v.images : [])
+                          .map((item) => item as Media)
+                          .filter((media) => !!media?.url)
+                          .map((media, index) => (
+                            <CarouselItem
+                              key={media.id?.toString() ?? media.url ?? index}
+                              className="basis-full pl-0"
+                            >
+                              <div className="aspect-[16/10] w-full overflow-hidden">
+                                <Image
+                                  src={media.url!}
+                                  alt={media.alt || `${v.name} image ${index + 1}`}
+                                  width={1600}
+                                  height={1000}
+                                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                              </div>
+                            </CarouselItem>
+                          ))}
+                      </CarouselContent>
+
+                      {(v.images?.length ?? 0) > 1 && (
+                        <>
+                          <CarouselPrevious className="left-3 z-20 cursor-pointer" />
+                          <CarouselNext className="right-3 z-20 cursor-pointer" />
+                        </>
+                      )}
+                    </Carousel>
                   </div>
 
                   {/* Info */}
@@ -207,8 +249,7 @@ function AlternativesDialog({
 
 export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
   const [showDatePicker, setShowDatePicker] = useState(false)
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [selectedDate, setSelectedDate] = useState('')
   const [availabilityResult, setAvailabilityResult] = useState<'available' | 'unavailable' | null>(
     null,
   )
@@ -216,22 +257,23 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
   const [availableAlternatives, setAvailableAlternatives] = useState<FleetVehicle[]>([])
 
   const handleCheckAvailability = () => {
-    if (!startDate || !endDate) return
+    if (!selectedDate) return
 
-    const isAvailable = checkAvailability(vehicle.bookings, startDate, endDate)
+    const isAvailable = checkAvailability(vehicle.bookings ?? [], selectedDate)
     setAvailabilityResult(isAvailable ? 'available' : 'unavailable')
 
     if (!isAvailable) {
-      // Pre-calculate available alternatives
-      const alternatives = getAvailableVehicles(allVehicles, startDate, endDate, vehicle.id)
+      const alternatives = getAvailableVehicles(allVehicles, selectedDate, vehicle.id)
       setAvailableAlternatives(alternatives)
+    } else {
+      setAvailableAlternatives([])
     }
   }
 
   const handleReset = () => {
-    setStartDate('')
-    setEndDate('')
+    setSelectedDate('')
     setAvailabilityResult(null)
+    setAvailableAlternatives([])
     setShowDatePicker(false)
   }
 
@@ -250,13 +292,45 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
       <article className="group relative bg-card border border-border rounded-xl overflow-hidden transition-all duration-500 hover:border-primary/40 hover:shadow-[0_0_40px_rgba(200,170,100,0.08)]">
         {/* Image */}
         <div className="relative aspect-[16/10] overflow-hidden">
-          <Image
-            src={vehicle.image}
-            alt={vehicle.name}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+          <Carousel
+            dir="ltr"
+            opts={{
+              loop: true,
+              direction: 'ltr',
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-0">
+              {(vehicle.images?.length ? vehicle.images : [])
+                .map((item) => item as Media)
+                .filter((media) => !!media?.url)
+                .map((media, index) => (
+                  <CarouselItem
+                    key={media.id?.toString() ?? media.url ?? index}
+                    className="basis-full pl-0"
+                  >
+                    <div className="aspect-[16/10] w-full overflow-hidden">
+                      <Image
+                        src={media.url!}
+                        alt={media.alt || `${vehicle.name} image ${index + 1}`}
+                        width={1600}
+                        height={1000}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+            </CarouselContent>
+
+            {(vehicle.images?.length ?? 0) > 1 && (
+              <>
+                <CarouselPrevious className="left-3 z-20 cursor-pointer" />
+                <CarouselNext className="right-3 z-20 cursor-pointer" />
+              </>
+            )}
+          </Carousel>
+
           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
 
           {/* Tags */}
@@ -283,6 +357,7 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
               <span>{vehicle.seats}</span>
             </div>
           </div>
+
           <p className="text-muted-foreground text-sm leading-relaxed">{vehicle.description}</p>
 
           {/* Availability Check Section */}
@@ -298,7 +373,7 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
             <div className="mt-2 p-4 rounded-lg border border-border bg-surface-elevated space-y-4">
               {/* Header with close button */}
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-foreground">בחרו תאריכים</span>
+                <span className="text-sm font-medium text-foreground">בחרו תאריך</span>
                 <button
                   onClick={handleReset}
                   className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
@@ -308,49 +383,29 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
                 </button>
               </div>
 
-              {/* Date Inputs */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label htmlFor={`start-${vehicle.id}`} className="text-xs text-muted-foreground">
-                    מתאריך
-                  </label>
-                  <input
-                    type="date"
-                    id={`start-${vehicle.id}`}
-                    value={startDate}
-                    min={today}
-                    onChange={(e) => {
-                      setStartDate(e.target.value)
-                      setAvailabilityResult(null)
-                      if (endDate && e.target.value > endDate) {
-                        setEndDate(e.target.value)
-                      }
-                    }}
-                    className="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor={`end-${vehicle.id}`} className="text-xs text-muted-foreground">
-                    עד תאריך
-                  </label>
-                  <input
-                    type="date"
-                    id={`end-${vehicle.id}`}
-                    value={endDate}
-                    min={startDate || today}
-                    onChange={(e) => {
-                      setEndDate(e.target.value)
-                      setAvailabilityResult(null)
-                    }}
-                    className="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                  />
-                </div>
+              {/* Date Input */}
+              <div className="space-y-1.5">
+                <label htmlFor={`date-${vehicle.id}`} className="text-xs text-muted-foreground">
+                  תאריך
+                </label>
+                <input
+                  type="date"
+                  id={`date-${vehicle.id}`}
+                  value={selectedDate}
+                  min={today}
+                  onChange={(e) => {
+                    setSelectedDate(e.target.value)
+                    setAvailabilityResult(null)
+                    setAvailableAlternatives([])
+                  }}
+                  className="w-full px-3 py-2 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                />
               </div>
 
               {/* Check Button */}
               <button
                 onClick={handleCheckAvailability}
-                disabled={!startDate || !endDate}
+                disabled={!selectedDate}
                 className="w-full py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
               >
                 בדיקת זמינות
@@ -370,18 +425,16 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
                       <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
                       <div className="space-y-0.5">
                         <p className="text-sm font-medium text-emerald-400">הרכב פנוי!</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(startDate)} - {formatDate(endDate)}
-                        </p>
+                        <p className="text-xs text-muted-foreground">{formatDate(selectedDate)}</p>
                       </div>
                     </>
                   ) : (
                     <>
                       <XCircle className="w-5 h-5 text-red-400 shrink-0" />
                       <div className="flex-1 space-y-0.5">
-                        <p className="text-sm font-medium text-red-400">הרכב תפוס בתאריכים אלו</p>
+                        <p className="text-sm font-medium text-red-400">הרכב תפוס בתאריך זה</p>
                         <p className="text-xs text-muted-foreground">
-                          נסו תאריכים אחרים או צפו ברכבים פנויים
+                          נסו תאריך אחר או צפו ברכבים פנויים
                         </p>
                       </div>
                     </>
@@ -411,13 +464,11 @@ export function FleetCard({ vehicle, allVehicles }: FleetCardProps) {
         </div>
       </article>
 
-      {/* Alternatives Dialog */}
       <AlternativesDialog
         isOpen={showAlternatives}
         onClose={handleCloseAlternatives}
         availableVehicles={availableAlternatives}
-        startDate={startDate}
-        endDate={endDate}
+        date={selectedDate}
       />
     </>
   )

@@ -7,7 +7,7 @@ type Props = Omit<SiteConfig['fleet'], 'vehicles'> & {
 }
 
 export function FleetSection({ sectionTitle, sectionSubtitle, vehicles }: Props) {
-  console.log(vehicles)
+  console.log(vehicles[0].bookings)
   return (
     <section id="fleet" className="py-24 md:py-32 bg-background">
       <div className="container mx-auto px-4">

@@ -38,10 +38,13 @@ export const FleetVehicles: CollectionConfig = {
       defaultValue: 'פסגת היוקרה הבריטית. חוויית נסיעה שקטה ומפנקת ברמה הגבוהה ביותר.',
     },
     {
-      name: 'image',
-      type: 'text',
+      name: 'images',
+      type: 'relationship',
+      relationTo: 'media',
       required: true,
-      defaultValue: '/images/fleet-rolls-royce.jpg',
+      hasMany: true,
+      minRows: 1,
+      maxRows: 10,
     },
     {
       name: 'seats',
@@ -70,39 +73,47 @@ export const FleetVehicles: CollectionConfig = {
       required: true,
       defaultValue: [],
       labels: {
-        singular: 'Booking Range',
-        plural: 'Booking Ranges',
+        singular: 'Booking Date',
+        plural: 'Booking Dates',
       },
       fields: [
         {
-          name: 'startDate',
+          name: 'date',
           type: 'date',
           required: true,
           admin: {
             date: {
-              pickerAppearance: 'dayAndTime',
+              pickerAppearance: 'dayOnly',
             },
           },
         },
-        {
-          name: 'endDate',
-          type: 'date',
-          required: true,
-          admin: {
-            date: {
-              pickerAppearance: 'dayAndTime',
-            },
-          },
-        },
+
         {
           name: 'customerName',
           type: 'text',
           required: false,
+          access: {
+            read: ({ req }) => {
+              // Only allow Payload admins / server-side trusted users
+              return !!req.user
+            },
+            create: ({ req }) => !!req.user,
+            update: ({ req }) => !!req.user,
+          },
         },
         {
           name: 'notes',
           type: 'textarea',
           required: false,
+
+          access: {
+            read: ({ req }) => {
+              // Only allow Payload admins / server-side trusted users
+              return !!req.user
+            },
+            create: ({ req }) => !!req.user,
+            update: ({ req }) => !!req.user,
+          },
         },
       ],
       validate: (value) => {

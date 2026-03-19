@@ -61,8 +61,7 @@ export function ContactSection({ contact, submitted = false }: ContactSectionPro
             <FormField label="שם מלא" id="name" name="name" type="text" required />
             <FormField label="טלפון" id="contact-phone" name="phone" type="tel" required />
             <div className="flex gap-2">
-              <FormField label="האירוע מ" id="date" name="dateFrom" type="date" />
-              <FormField label="האירוע עד" id="date" name="dateTo" type="date" />
+              <FormField label="תאריך" id="date" name="date" type="date" />
             </div>
 
             <div className="flex flex-col gap-2">

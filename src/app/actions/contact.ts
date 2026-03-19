@@ -7,8 +7,7 @@ import { redirect } from 'next/navigation'
 export async function submitContactForm(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
   const phone = String(formData.get('phone') ?? '').trim()
-  const dateFrom = String(formData.get('dateFrom') ?? '').trim()
-  const dateTo = String(formData.get('dateTo') ?? '').trim()
+  const date = String(formData.get('date') ?? '').trim()
   const message = String(formData.get('message') ?? '').trim()
 
   if (!name || !phone) {
@@ -18,19 +17,14 @@ export async function submitContactForm(formData: FormData) {
   console.log('New contact form submission:', {
     name,
     phone,
-    date: dateFrom || null,
-    datet: dateTo || null,
+    date: date || null,
     message: message || null,
     submittedAt: new Date().toISOString(),
   })
 
-  const date = dateFrom
-    ? dateTo
-      ? `Has an event from *${dateFrom}* till *${dateTo}*`
-      : `Has an event on *${dateFrom}*`
-    : ''
+  const d = !!date ? `Date: ${date}` : ''
   const msg = `
-    New Contact Request.\nname: *${name}*\nphone number: *${phone}*\n${date}\n\n\`\`\`${message}\`\`\``
+    New Contact Request.\nname: *${name}*\nphone number: *${phone}*\n${d}\n\n\`\`\`${message}\`\`\``
 
   await sendTelegramMessage(
     msg,

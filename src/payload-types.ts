@@ -179,15 +179,14 @@ export interface FleetVehicle {
   id: string;
   name: string;
   description: string;
-  image: string;
+  images: (number | Media)[];
   seats: number;
   tags: {
     tag: string;
     id?: string | null;
   }[];
   bookings: {
-    startDate: string;
-    endDate: string;
+    date: string;
     customerName?: string | null;
     notes?: string | null;
     id?: string | null;
@@ -321,7 +320,7 @@ export interface FleetVehiclesSelect<T extends boolean = true> {
   id?: T;
   name?: T;
   description?: T;
-  image?: T;
+  images?: T;
   seats?: T;
   tags?:
     | T
@@ -332,8 +331,7 @@ export interface FleetVehiclesSelect<T extends boolean = true> {
   bookings?:
     | T
     | {
-        startDate?: T;
-        endDate?: T;
+        date?: T;
         customerName?: T;
         notes?: T;
         id?: T;
