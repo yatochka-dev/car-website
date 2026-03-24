@@ -32,6 +32,7 @@ export default async function RootLayout({
     slug: 'site-config',
     depth: 100,
   })
+
   return (
     <html lang="he" dir="rtl" className={heebo.variable}>
       <body className="font-sans antialiased">
@@ -42,7 +43,6 @@ export default async function RootLayout({
 
           <SiteFooter {...siteConfig} />
         </div>
-        {/*<Analytics />*/}
       </body>
     </html>
   )
@@ -55,6 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: seo.title,
     description: seo.description,
+    icons: [{ url: './favicon.ico', rel: 'icon' }],
     openGraph: {
       title: seo.title,
       description: seo.description,

@@ -9,7 +9,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"path" varchar NOT NULL,
   	"media_id" integer
   );
-  
+
   ALTER TABLE "fleet_vehicles_bookings" ADD COLUMN "date" timestamp(3) with time zone NOT NULL;
   ALTER TABLE "fleet_vehicles_rels" ADD CONSTRAINT "fleet_vehicles_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."fleet_vehicles"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "fleet_vehicles_rels" ADD CONSTRAINT "fleet_vehicles_rels_media_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;
