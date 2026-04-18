@@ -1,11 +1,12 @@
-import { Phone, Mail, MapPin, Send } from 'lucide-react'
-import { SectionHeading } from '@/components/ui/section-heading'
-import type { SiteConfig } from '@/payload-types'
-import { submitContactForm } from '@/app/actions/contact'
 import Link from 'next/link'
+import { Mail, MapPin, Phone, Send } from 'lucide-react'
+
+import { submitContactForm } from '@/app/actions/contact'
+import { SectionHeading } from '@/components/ui/section-heading'
+import type { ContactSettingsData } from '@/lib/site-globals'
 
 type ContactSectionProps = {
-  contact: SiteConfig['contact']
+  contact: ContactSettingsData
   submitted?: boolean
 }
 
@@ -24,7 +25,7 @@ export function ContactSection({ contact, submitted = false }: ContactSectionPro
               <ContactInfoItem
                 icon={<Phone className="h-5 w-5" />}
                 label="טלפון"
-                value={contact.phone}
+                value={contact.phoneDisplay}
                 href={`tel:${contact.phone}`}
               />
               <ContactInfoItem
@@ -60,9 +61,7 @@ export function ContactSection({ contact, submitted = false }: ContactSectionPro
           >
             <FormField label="שם מלא" id="name" name="name" type="text" required />
             <FormField label="טלפון" id="contact-phone" name="phone" type="tel" required />
-            <div className="flex gap-2">
-              <FormField label="תאריך" id="date" name="date" type="date" />
-            </div>
+            <FormField label="תאריך" id="date" name="date" type="date" />
 
             <div className="flex flex-col gap-2">
               <label htmlFor="message" className="text-sm font-medium text-foreground/80">
@@ -84,13 +83,14 @@ export function ContactSection({ contact, submitted = false }: ContactSectionPro
               <Send className="h-4 w-4" />
               <span>שליחה</span>
             </button>
-            <p className={'text-muted-foreground'}>
+
+            <p className="text-muted-foreground">
               שליחת הטופס מהווה הסכמה ל־
-              <Link href={'/use'} className={'underline'}>
+              <Link href="/use" className="underline">
                 תנאי השימוש
               </Link>{' '}
-              ול
-              <Link href={'/privacy'} className={'underline'}>
+              ול־
+              <Link href="/privacy" className="underline">
                 מדיניות הפרטיות של האתר
               </Link>
               .

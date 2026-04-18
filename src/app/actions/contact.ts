@@ -1,8 +1,9 @@
 'use server'
 
+import { redirect } from 'next/navigation'
+
 import { payload } from '@/lib/p'
 import { sendTelegramMessage } from '@/lib/tg'
-import { redirect } from 'next/navigation'
 
 export async function submitContactForm(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
@@ -11,26 +12,24 @@ export async function submitContactForm(formData: FormData) {
   const message = String(formData.get('message') ?? '').trim()
 
   if (!name || !phone) {
-    throw new Error('Name and phone are required')
+    throw new Error('חובה למלא שם וטלפון')
   }
 
-  console.log('New contact form submission:', {
-    name,
-    phone,
-    date: date || null,
-    message: message || null,
-    submittedAt: new Date().toISOString(),
-  })
+  const details = [
+    'פניית קשר חדשה',
+    `שם: *${name}*`,
+    `טלפון: *${phone}*`,
+    date ? `תאריך: ${date}` : null,
+    '',
+    `\`\`\`${message}\`\`\``,
+  ]
+    .filter(Boolean)
+    .join('\n')
 
-  const d = !!date ? `Date: ${date}` : ''
-  const msg = `
-    New Contact Request.\nname: *${name}*\nphone number: *${phone}*\n${d}\n\n\`\`\`${message}\`\`\``
+  const p = await payload()
+  const contactSettings = await p.findGlobal({ slug: 'contact-settings' })
 
-  await sendTelegramMessage(
-    msg,
-    process.env.TG_TOKEN as string,
-    (await (await payload()).findGlobal({ slug: 'site-config' })).tg_chat_id,
-  )
+  await sendTelegramMessage(details, process.env.TG_TOKEN as string, contactSettings.tgChatId)
 
   redirect('/?contactSubmitted=1#contact')
 }

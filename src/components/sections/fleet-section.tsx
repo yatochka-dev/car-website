@@ -1,13 +1,13 @@
-import { SectionHeading } from '@/components/ui/section-heading'
 import { FleetCard } from '@/components/cards/fleet-card'
-import { FleetVehicle, SiteConfig } from '@/payload-types'
+import { SectionHeading } from '@/components/ui/section-heading'
+import type { HomeFleetData } from '@/lib/site-globals'
+import type { FleetVehicle } from '@/payload-types'
 
-type Props = Omit<SiteConfig['fleet'], 'vehicles'> & {
+type Props = HomeFleetData & {
   vehicles: FleetVehicle[]
 }
 
 export function FleetSection({ sectionTitle, sectionSubtitle, vehicles }: Props) {
-  console.log(vehicles[0].bookings)
   return (
     <section id="fleet" className="py-24 md:py-32 bg-background">
       <div className="container mx-auto px-4">

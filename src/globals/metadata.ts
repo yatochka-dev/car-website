@@ -1,59 +1,63 @@
-import { GlobalConfig } from 'payload'
+import type { GlobalConfig } from 'payload'
+
+import { defaultGlobalAccess, siteSettingsGroup } from './shared'
 
 export const SiteSEO: GlobalConfig = {
   slug: 'site-seo',
-  label: 'Site SEO',
-  access: {
-    read: () => true,
+  label: 'SEO לאתר',
+  admin: {
+    group: siteSettingsGroup,
+    description: 'כותרות ומטא-דאטה ברירת מחדל לאתר.',
   },
+  access: defaultGlobalAccess,
   fields: [
     {
       name: 'siteName',
-      label: 'Site Name',
+      label: 'שם האתר',
       type: 'text',
       required: true,
     },
     {
       name: 'title',
-      label: 'Default Title',
+      label: 'כותרת ברירת מחדל',
       type: 'text',
       required: true,
       admin: {
-        description: 'Used as the base title for the website',
+        description: 'מוצגת כברירת מחדל בכותרת הדפדפן ובשיתופים.',
       },
     },
     {
       name: 'description',
-      label: 'Meta Description',
+      label: 'תיאור מטא',
       type: 'textarea',
       required: true,
       admin: {
-        description: 'Recommended length: 150–160 characters',
+        description: 'מומלץ לשמור על אורך של 150 עד 160 תווים.',
       },
     },
     {
       name: 'ogImage',
-      label: 'Open Graph Image',
+      label: 'תמונת Open Graph',
       type: 'upload',
       relationTo: 'media',
     },
     {
       name: 'robots',
-      label: 'Robots Indexing',
+      label: 'אינדוקס במנועי חיפוש',
       type: 'select',
       defaultValue: 'noindex',
       options: [
         {
-          label: 'Index',
+          label: 'לאנדקס',
           value: 'index',
         },
         {
-          label: 'No Index',
+          label: 'לא לאנדקס',
           value: 'noindex',
         },
       ],
       admin: {
-        description: 'Keep NOINDEX until the final domain launches',
+        description: 'השאר על noindex עד שהדומיין הסופי מוכן לעלייה לאוויר.',
       },
     },
   ],

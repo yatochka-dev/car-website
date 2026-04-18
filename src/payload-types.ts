@@ -96,11 +96,21 @@ export interface Config {
   };
   fallbackLocale: null;
   globals: {
-    'site-config': SiteConfig;
+    'site-shell': SiteShell;
+    'contact-settings': ContactSetting;
+    'home-hero': HomeHero;
+    'home-fleet': HomeFleet;
+    'home-service': HomeService;
+    'home-testimonials': HomeTestimonial;
     'site-seo': SiteSeo;
   };
   globalsSelect: {
-    'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
+    'site-shell': SiteShellSelect<false> | SiteShellSelect<true>;
+    'contact-settings': ContactSettingsSelect<false> | ContactSettingsSelect<true>;
+    'home-hero': HomeHeroSelect<false> | HomeHeroSelect<true>;
+    'home-fleet': HomeFleetSelect<false> | HomeFleetSelect<true>;
+    'home-service': HomeServiceSelect<false> | HomeServiceSelect<true>;
+    'home-testimonials': HomeTestimonialsSelect<false> | HomeTestimonialsSelect<true>;
     'site-seo': SiteSeoSelect<false> | SiteSeoSelect<true>;
   };
   locale: null;
@@ -183,7 +193,7 @@ export interface Media {
   focalY?: number | null;
 }
 /**
- * רכבי צי + טווחי תאריכים תפוסים
+ * ניהול רכבי הצי ותאריכים תפוסים.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "fleet-vehicles".
@@ -648,14 +658,13 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * Single source of truth for site text, links, and metadata.
+ * מיתוג, ניווט עליון וקישורי תחתית לכל האתר.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-config".
+ * via the `definition` "site-shell".
  */
-export interface SiteConfig {
+export interface SiteShell {
   id: number;
-  tg_chat_id: string;
   brand: {
     name: string;
     tagline: string;
@@ -665,48 +674,6 @@ export interface SiteConfig {
     href: string;
     id?: string | null;
   }[];
-  contact: {
-    phone: string;
-    phoneDisplay: string;
-    whatsapp: string;
-    whatsappDisplay: string;
-    email: string;
-    address: string;
-  };
-  hero: {
-    headline: string;
-    subheadline: string;
-    cta: string;
-    ctaHref: string;
-    backgroundImage: number | Media;
-  };
-  fleet: {
-    sectionTitle: string;
-    sectionSubtitle: string;
-    /**
-     * בחר רכבים שיוצגו באתר
-     */
-    vehicles: (string | FleetVehicle)[];
-  };
-  service: {
-    sectionTitle: string;
-    sectionSubtitle: string;
-    features: {
-      id: string;
-      icon: 'crown' | 'shield' | 'clock' | 'star';
-      title: string;
-      description: string;
-    }[];
-  };
-  testimonials: {
-    sectionTitle: string;
-    items: {
-      id: string;
-      name: string;
-      text: string;
-      rating: number;
-    }[];
-  };
   footer: {
     copyright: string;
     links: {
@@ -719,6 +686,96 @@ export interface SiteConfig {
   createdAt?: string | null;
 }
 /**
+ * פרטי התקשרות ויעד הטלגרם של פניות מהאתר.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-settings".
+ */
+export interface ContactSetting {
+  id: number;
+  tgChatId: string;
+  phone: string;
+  phoneDisplay: string;
+  whatsapp: string;
+  whatsappDisplay: string;
+  email: string;
+  address: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * הכותרת הראשית והתמונה המובילה של עמוד הבית.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-hero".
+ */
+export interface HomeHero {
+  id: number;
+  headline: string;
+  subheadline: string;
+  cta: string;
+  ctaHref: string;
+  backgroundImage: number | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * כותרת הסקשן והרכבים המוצגים בעמוד הבית.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-fleet".
+ */
+export interface HomeFleet {
+  id: number;
+  sectionTitle: string;
+  sectionSubtitle: string;
+  /**
+   * בחר את הרכבים שיוצגו בעמוד הבית.
+   */
+  vehicles: (string | FleetVehicle)[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * כותרות ויתרונות השירות של עמוד הבית.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-service".
+ */
+export interface HomeService {
+  id: number;
+  sectionTitle: string;
+  sectionSubtitle: string;
+  features: {
+    id: string;
+    icon: 'crown' | 'shield' | 'clock' | 'star';
+    title: string;
+    description: string;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * כותרת ההמלצות והעדויות המוצגות בעמוד הבית.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-testimonials".
+ */
+export interface HomeTestimonial {
+  id: number;
+  sectionTitle: string;
+  items: {
+    id: string;
+    name: string;
+    text: string;
+    rating: number;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * כותרות ומטא-דאטה ברירת מחדל לאתר.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-seo".
  */
@@ -726,16 +783,16 @@ export interface SiteSeo {
   id: number;
   siteName: string;
   /**
-   * Used as the base title for the website
+   * מוצגת כברירת מחדל בכותרת הדפדפן ובשיתופים.
    */
   title: string;
   /**
-   * Recommended length: 150–160 characters
+   * מומלץ לשמור על אורך של 150 עד 160 תווים.
    */
   description: string;
   ogImage?: (number | null) | Media;
   /**
-   * Keep NOINDEX until the final domain launches
+   * השאר על noindex עד שהדומיין הסופי מוכן לעלייה לאוויר.
    */
   robots?: ('index' | 'noindex') | null;
   updatedAt?: string | null;
@@ -743,10 +800,9 @@ export interface SiteSeo {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-config_select".
+ * via the `definition` "site-shell_select".
  */
-export interface SiteConfigSelect<T extends boolean = true> {
-  tg_chat_id?: T;
+export interface SiteShellSelect<T extends boolean = true> {
   brand?:
     | T
     | {
@@ -760,59 +816,6 @@ export interface SiteConfigSelect<T extends boolean = true> {
         href?: T;
         id?: T;
       };
-  contact?:
-    | T
-    | {
-        phone?: T;
-        phoneDisplay?: T;
-        whatsapp?: T;
-        whatsappDisplay?: T;
-        email?: T;
-        address?: T;
-      };
-  hero?:
-    | T
-    | {
-        headline?: T;
-        subheadline?: T;
-        cta?: T;
-        ctaHref?: T;
-        backgroundImage?: T;
-      };
-  fleet?:
-    | T
-    | {
-        sectionTitle?: T;
-        sectionSubtitle?: T;
-        vehicles?: T;
-      };
-  service?:
-    | T
-    | {
-        sectionTitle?: T;
-        sectionSubtitle?: T;
-        features?:
-          | T
-          | {
-              id?: T;
-              icon?: T;
-              title?: T;
-              description?: T;
-            };
-      };
-  testimonials?:
-    | T
-    | {
-        sectionTitle?: T;
-        items?:
-          | T
-          | {
-              id?: T;
-              name?: T;
-              text?: T;
-              rating?: T;
-            };
-      };
   footer?:
     | T
     | {
@@ -824,6 +827,85 @@ export interface SiteConfigSelect<T extends boolean = true> {
               href?: T;
               id?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-settings_select".
+ */
+export interface ContactSettingsSelect<T extends boolean = true> {
+  tgChatId?: T;
+  phone?: T;
+  phoneDisplay?: T;
+  whatsapp?: T;
+  whatsappDisplay?: T;
+  email?: T;
+  address?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-hero_select".
+ */
+export interface HomeHeroSelect<T extends boolean = true> {
+  headline?: T;
+  subheadline?: T;
+  cta?: T;
+  ctaHref?: T;
+  backgroundImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-fleet_select".
+ */
+export interface HomeFleetSelect<T extends boolean = true> {
+  sectionTitle?: T;
+  sectionSubtitle?: T;
+  vehicles?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-service_select".
+ */
+export interface HomeServiceSelect<T extends boolean = true> {
+  sectionTitle?: T;
+  sectionSubtitle?: T;
+  features?:
+    | T
+    | {
+        id?: T;
+        icon?: T;
+        title?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-testimonials_select".
+ */
+export interface HomeTestimonialsSelect<T extends boolean = true> {
+  sectionTitle?: T;
+  items?:
+    | T
+    | {
+        id?: T;
+        name?: T;
+        text?: T;
+        rating?: T;
       };
   updatedAt?: T;
   createdAt?: T;

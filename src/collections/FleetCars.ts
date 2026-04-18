@@ -1,16 +1,16 @@
-import { FleetVehicle, SiteConfig } from '@/payload-types'
 import type { CollectionConfig } from 'payload'
 import { v4 as uuid } from 'uuid'
+
 export const FleetVehicles: CollectionConfig = {
   slug: 'fleet-vehicles',
   labels: {
-    singular: 'Fleet Vehicle',
-    plural: 'Fleet Vehicles',
+    singular: 'רכב בצי',
+    plural: 'רכבי צי',
   },
   admin: {
     useAsTitle: 'name',
-    group: 'Site Settings',
-    description: 'רכבי צי + טווחי תאריכים תפוסים',
+    group: 'הגדרות האתר',
+    description: 'ניהול רכבי הצי ותאריכים תפוסים.',
   },
   access: {
     read: () => true,
@@ -21,24 +21,28 @@ export const FleetVehicles: CollectionConfig = {
   fields: [
     {
       name: 'id',
+      label: 'מזהה',
       type: 'text',
       required: true,
       defaultValue: uuid,
     },
     {
       name: 'name',
+      label: 'שם הרכב',
       type: 'text',
       required: true,
       defaultValue: 'רולס רויס גוסט',
     },
     {
       name: 'description',
+      label: 'תיאור',
       type: 'textarea',
       required: true,
       defaultValue: 'פסגת היוקרה הבריטית. חוויית נסיעה שקטה ומפנקת ברמה הגבוהה ביותר.',
     },
     {
       name: 'images',
+      label: 'תמונות',
       type: 'relationship',
       relationTo: 'media',
       required: true,
@@ -48,6 +52,7 @@ export const FleetVehicles: CollectionConfig = {
     },
     {
       name: 'seats',
+      label: 'מספר מקומות',
       type: 'number',
       required: true,
       min: 1,
@@ -55,13 +60,19 @@ export const FleetVehicles: CollectionConfig = {
     },
     {
       name: 'tags',
+      label: 'תגיות',
       type: 'array',
       required: true,
       minRows: 1,
       defaultValue: [{ tag: 'חתונות' }, { tag: 'VIP' }],
+      labels: {
+        singular: 'תגית',
+        plural: 'תגיות',
+      },
       fields: [
         {
           name: 'tag',
+          label: 'תגית',
           type: 'text',
           required: true,
         },
@@ -69,16 +80,18 @@ export const FleetVehicles: CollectionConfig = {
     },
     {
       name: 'bookings',
+      label: 'תאריכים תפוסים',
       type: 'array',
       required: true,
       defaultValue: [],
       labels: {
-        singular: 'Booking Date',
-        plural: 'Booking Dates',
+        singular: 'תאריך תפוס',
+        plural: 'תאריכים תפוסים',
       },
       fields: [
         {
           name: 'date',
+          label: 'תאריך',
           type: 'date',
           required: true,
           admin: {
@@ -87,30 +100,24 @@ export const FleetVehicles: CollectionConfig = {
             },
           },
         },
-
         {
           name: 'customerName',
+          label: 'שם הלקוח',
           type: 'text',
           required: false,
           access: {
-            read: ({ req }) => {
-              // Only allow Payload admins / server-side trusted users
-              return !!req.user
-            },
+            read: ({ req }) => !!req.user,
             create: ({ req }) => !!req.user,
             update: ({ req }) => !!req.user,
           },
         },
         {
           name: 'notes',
+          label: 'הערות',
           type: 'textarea',
           required: false,
-
           access: {
-            read: ({ req }) => {
-              // Only allow Payload admins / server-side trusted users
-              return !!req.user
-            },
+            read: ({ req }) => !!req.user,
             create: ({ req }) => !!req.user,
             update: ({ req }) => !!req.user,
           },
@@ -120,12 +127,13 @@ export const FleetVehicles: CollectionConfig = {
         if (!Array.isArray(value)) return true
 
         for (const booking of value) {
-          // @ts-expect-error
+          // Legacy data may still contain the old range-based shape.
+          // @ts-expect-error legacy rows are migrated gradually
           if (!booking?.startDate || !booking?.endDate) continue
 
-          // @ts-expect-error
+          // @ts-expect-error legacy rows are migrated gradually
           const start = new Date(booking.startDate).getTime()
-          // @ts-expect-error
+          // @ts-expect-error legacy rows are migrated gradually
           const end = new Date(booking.endDate).getTime()
 
           if (end < start) {

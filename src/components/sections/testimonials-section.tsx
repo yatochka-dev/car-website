@@ -1,10 +1,11 @@
 import { Star } from 'lucide-react'
+
 import { SectionHeading } from '@/components/ui/section-heading'
-import { SiteConfig } from '@/payload-types'
+import type { HomeTestimonialsData } from '@/lib/site-globals'
 
 function StarRating({ count }: { count: number }) {
   return (
-    <div className="flex gap-1" aria-label={`${count} out of 5 stars`}>
+    <div className="flex gap-1" aria-label={`${count} מתוך 5 כוכבים`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -15,7 +16,7 @@ function StarRating({ count }: { count: number }) {
   )
 }
 
-export function TestimonialsSection({ sectionTitle, items }: SiteConfig['testimonials']) {
+export function TestimonialsSection({ sectionTitle, items }: HomeTestimonialsData) {
   return (
     <section id="testimonials" className="py-24 md:py-32 bg-background">
       <div className="container mx-auto px-4">

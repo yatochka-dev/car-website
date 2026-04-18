@@ -1,18 +1,27 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { importExportPlugin } from '@payloadcms/plugin-import-export'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
+import { en } from 'payload/i18n/en'
+import { he } from 'payload/i18n/he'
 import sharp from 'sharp'
-
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { SiteConfig } from './globals/site-config'
-import { FleetVehicles } from './collections/FleetCars'
-import { s3Storage } from '@payloadcms/storage-s3'
-import { SiteSEO } from './globals/metadata'
+import { fileURLToPath } from 'url'
 import { z } from 'zod'
+
+import { FleetVehicles } from './collections/FleetCars'
+import { Media } from './collections/Media'
+import { Users } from './collections/Users'
+import { ContactSettings } from './globals/contact-settings'
+import { HomeFleet } from './globals/home-fleet'
+import { HomeHero } from './globals/home-hero'
+import { HomeService } from './globals/home-service'
+import { HomeTestimonials } from './globals/home-testimonials'
+import { SiteSEO } from './globals/metadata'
+import { defaultLivePreviewPath } from './globals/shared'
+import { SiteShell } from './globals/site-shell'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -38,10 +47,42 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    livePreview: {
+      url: defaultLivePreviewPath,
+      globals: [
+        SiteShell.slug,
+        ContactSettings.slug,
+        HomeHero.slug,
+        HomeFleet.slug,
+        HomeService.slug,
+        HomeTestimonials.slug,
+      ],
+      breakpoints: [
+        {
+          label: 'מובייל',
+          name: 'mobile',
+          width: 390,
+          height: 844,
+        },
+        {
+          label: 'דסקטופ',
+          name: 'desktop',
+          width: 1440,
+          height: 900,
+        },
+      ],
+    },
   },
   collections: [Users, Media, FleetVehicles],
-  globals: [SiteConfig, SiteSEO],
+  globals: [SiteShell, ContactSettings, HomeHero, HomeFleet, HomeService, HomeTestimonials, SiteSEO],
   editor: lexicalEditor(),
+  i18n: {
+    fallbackLanguage: 'he',
+    supportedLanguages: {
+      en,
+      he,
+    },
+  },
   plugins: [
     r2,
     importExportPlugin({
@@ -98,6 +139,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    prodMigrations: migrations,
   }),
   sharp,
 })

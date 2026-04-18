@@ -1,31 +1,29 @@
 import Image from 'next/image'
-import { Media, SiteConfig } from '@/payload-types'
 
-export function HeroSection(content: SiteConfig['hero']) {
+import type { HomeHeroData } from '@/lib/site-globals'
+import type { Media } from '@/payload-types'
+
+export function HeroSection(content: HomeHeroData) {
   return (
     <section
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Background Image */}
       <div className="absolute inset-0">
         <Image
           src={(content.backgroundImage as Media).url as string}
-          alt="Luxury vehicle"
+          alt="רכב יוקרה"
           fill
           className="object-cover"
           priority
           sizes="100vw"
         />
-        {/* Overlays for readability */}
         <div className="absolute inset-0 bg-background/70" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
-          {/* Decorative line */}
           <div className="w-16 h-px bg-primary" />
 
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-foreground leading-tight text-balance">
@@ -43,7 +41,6 @@ export function HeroSection(content: SiteConfig['hero']) {
             {content.cta}
           </a>
 
-          {/* Scroll indicator */}
           <div className="mt-12 animate-bounce">
             <svg
               className="w-6 h-6 text-primary/60"

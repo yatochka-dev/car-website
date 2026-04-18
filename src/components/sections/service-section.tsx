@@ -1,6 +1,7 @@
-import { Crown, Shield, Clock, Star } from 'lucide-react'
+import { Clock, Crown, Shield, Star } from 'lucide-react'
+
 import { SectionHeading } from '@/components/ui/section-heading'
-import { SiteConfig } from '@/payload-types'
+import type { HomeServiceData } from '@/lib/site-globals'
 
 const iconMap = {
   crown: Crown,
@@ -9,7 +10,7 @@ const iconMap = {
   star: Star,
 } as const
 
-export function ServiceSection({ sectionTitle, sectionSubtitle, features }: SiteConfig['service']) {
+export function ServiceSection({ sectionTitle, sectionSubtitle, features }: HomeServiceData) {
   return (
     <section id="service" className="py-24 md:py-32 bg-surface">
       <div className="container mx-auto px-4">
@@ -17,6 +18,7 @@ export function ServiceSection({ sectionTitle, sectionSubtitle, features }: Site
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature) => {
             const Icon = iconMap[feature.icon]
+
             return (
               <article
                 key={feature.id}
