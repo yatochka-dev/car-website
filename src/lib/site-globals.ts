@@ -25,32 +25,42 @@ export async function getSiteFrameData() {
 export async function getHomePageData() {
   const p = await payload()
 
-  const [homeHero, homeFleet, homeService, homeTestimonials, contactSettings] = await Promise.all([
-    p.findGlobal({
-      slug: 'home-hero',
-      depth: 1,
-    }),
-    p.findGlobal({
-      slug: 'home-fleet',
-      depth: 2,
-    }),
-    p.findGlobal({
-      slug: 'home-service',
-      depth: 0,
-    }),
-    p.findGlobal({
-      slug: 'home-testimonials',
-      depth: 0,
-    }),
-    p.findGlobal({
-      slug: 'contact-settings',
-      depth: 0,
-    }),
-  ])
+  const [homeHero, homeFleet, homeService, homeTestimonials, contactSettings, fleetVehicles] =
+    await Promise.all([
+      p.findGlobal({
+        slug: 'home-hero',
+        depth: 1,
+      }),
+      p.findGlobal({
+        slug: 'home-fleet',
+        depth: 0,
+      }),
+      p.findGlobal({
+        slug: 'home-service',
+        depth: 0,
+      }),
+      p.findGlobal({
+        slug: 'home-testimonials',
+        depth: 0,
+      }),
+      p.findGlobal({
+        slug: 'contact-settings',
+        depth: 0,
+      }),
+      p.find({
+        collection: 'fleet-vehicles',
+        depth: 2,
+        pagination: false,
+        sort: 'homepageOrder',
+        where: {
+          showOnHomepage: {
+            equals: true,
+          },
+        },
+      }),
+    ])
 
-  const vehicles = (homeFleet.vehicles ?? []).filter(
-    (vehicle): vehicle is FleetVehicle => typeof vehicle !== 'string',
-  )
+  const vehicles = fleetVehicles.docs as FleetVehicle[]
 
   return {
     homeHero,

@@ -15,12 +15,13 @@ import type {
   SiteFrameData,
   SiteShellData,
 } from '@/lib/site-globals'
-import type { FleetVehicle } from '@/payload-types'
 
 type Props = {
   initialHomeData: HomePageData
   initialSiteFrameData: SiteFrameData
 }
+
+type HomeFleetContent = Pick<HomeFleetData, 'sectionSubtitle' | 'sectionTitle'>
 
 function resolveServerURL() {
   if (typeof window !== 'undefined') {
@@ -37,20 +38,7 @@ function resolveServerURL() {
     return window.location.origin
   }
 
-  return (
-    process.env.NEXT_PUBLIC_PAYLOAD_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    ''
-  )
-}
-
-function normalizeHomeFleetData(homeFleet: HomeFleetData): HomeFleetData {
-  return {
-    ...homeFleet,
-    vehicles: (homeFleet.vehicles ?? []).filter(
-      (vehicle): vehicle is FleetVehicle => typeof vehicle !== 'string',
-    ),
-  }
+  return process.env.NEXT_PUBLIC_PAYLOAD_URL || process.env.NEXT_PUBLIC_SITE_URL || ''
 }
 
 type PreviewScaffoldProps = {
@@ -158,13 +146,18 @@ function HomeHeroPreview({ initialHomeData, initialSiteFrameData }: Props) {
 }
 
 function HomeFleetPreview({ initialHomeData, initialSiteFrameData }: Props) {
-  const { data: liveHomeFleet } = useLivePreview({
-    depth: 2,
-    initialData: initialHomeData.homeFleet,
+  const { data: liveHomeFleetContent } = useLivePreview<HomeFleetContent>({
+    initialData: {
+      sectionTitle: initialHomeData.homeFleet.sectionTitle,
+      sectionSubtitle: initialHomeData.homeFleet.sectionSubtitle,
+    },
     serverURL: resolveServerURL(),
   })
 
-  const homeFleet = normalizeHomeFleetData(liveHomeFleet)
+  const homeFleet: HomeFleetData = {
+    ...initialHomeData.homeFleet,
+    ...liveHomeFleetContent,
+  }
 
   return (
     <PreviewScaffold

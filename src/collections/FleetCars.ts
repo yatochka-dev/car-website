@@ -38,7 +38,39 @@ export const FleetVehicles: CollectionConfig = {
       label: 'תיאור',
       type: 'textarea',
       required: true,
-      defaultValue: 'פסגת היוקרה הבריטית. חוויית נסיעה שקטה ומפנקת ברמה הגבוהה ביותר.',
+      defaultValue:
+        'פסגת היוקרה הבריטית. חוויית נסיעה שקטה ומפנקת ברמה הגבוהה ביותר.',
+    },
+    {
+      name: 'showOnHomepage',
+      label: 'הצג בעמוד הבית',
+      type: 'checkbox',
+      defaultValue: false,
+      index: true,
+      admin: {
+        description: 'שלוט אם הרכב יוצג בסקשן צי הרכבים בעמוד הבית.',
+      },
+    },
+    {
+      name: 'homepageOrder',
+      label: 'סדר בעמוד הבית',
+      type: 'number',
+      min: 0,
+      index: true,
+      admin: {
+        description: 'מספר נמוך יותר יוצג קודם. רלוונטי רק עבור רכבים שמוצגים בעמוד הבית.',
+        condition: (_, siblingData) => Boolean(siblingData?.showOnHomepage),
+      },
+      validate: (
+        value: null | number | undefined,
+        { siblingData }: { siblingData?: { showOnHomepage?: boolean } },
+      ) => {
+        if (siblingData?.showOnHomepage && (value === null || value === undefined)) {
+          return 'הזינו סדר לרכב שמוצג בעמוד הבית'
+        }
+
+        return true
+      },
     },
     {
       name: 'images',

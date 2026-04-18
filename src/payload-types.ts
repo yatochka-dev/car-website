@@ -202,6 +202,14 @@ export interface FleetVehicle {
   id: string;
   name: string;
   description: string;
+  /**
+   * שלוט אם הרכב יוצג בסקשן צי הרכבים בעמוד הבית.
+   */
+  showOnHomepage?: boolean | null;
+  /**
+   * מספר נמוך יותר יוצג קודם. רלוונטי רק עבור רכבים שמוצגים בעמוד הבית.
+   */
+  homepageOrder?: number | null;
   images: (number | Media)[];
   seats: number;
   tags: {
@@ -509,6 +517,8 @@ export interface FleetVehiclesSelect<T extends boolean = true> {
   id?: T;
   name?: T;
   description?: T;
+  showOnHomepage?: T;
+  homepageOrder?: T;
   images?: T;
   seats?: T;
   tags?:
@@ -720,7 +730,7 @@ export interface HomeHero {
   createdAt?: string | null;
 }
 /**
- * כותרת הסקשן והרכבים המוצגים בעמוד הבית.
+ * כותרת ותיאור סקשן צי הרכבים בעמוד הבית.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-fleet".
@@ -729,10 +739,6 @@ export interface HomeFleet {
   id: number;
   sectionTitle: string;
   sectionSubtitle: string;
-  /**
-   * בחר את הרכבים שיוצגו בעמוד הבית.
-   */
-  vehicles: (string | FleetVehicle)[];
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -869,7 +875,6 @@ export interface HomeHeroSelect<T extends boolean = true> {
 export interface HomeFleetSelect<T extends boolean = true> {
   sectionTitle?: T;
   sectionSubtitle?: T;
-  vehicles?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
