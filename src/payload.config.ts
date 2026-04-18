@@ -48,7 +48,10 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     livePreview: {
-      url: defaultLivePreviewPath,
+      url: ({ globalConfig }) =>
+        globalConfig
+          ? `${defaultLivePreviewPath}?global=${encodeURIComponent(globalConfig.slug)}`
+          : defaultLivePreviewPath,
       globals: [
         SiteShell.slug,
         ContactSettings.slug,
