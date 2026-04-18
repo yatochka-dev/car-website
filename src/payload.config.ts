@@ -58,21 +58,15 @@ export default buildConfig({
       icons: [
         {
           rel: 'icon',
-          type: 'image/png',
-          sizes: '32x32',
-          media: '(prefers-color-scheme: light)',
-          url: '/icon-dark-32x32.png',
+          url: '/favicon.ico',
         },
         {
-          rel: 'icon',
-          type: 'image/png',
-          sizes: '32x32',
-          media: '(prefers-color-scheme: dark)',
-          url: '/icon-light-32x32.png',
+          rel: 'shortcut icon',
+          url: '/favicon.ico',
         },
         {
           rel: 'apple-touch-icon',
-          url: '/apple-icon.png',
+          url: '/favicon.ico',
         },
       ],
       openGraph: {
