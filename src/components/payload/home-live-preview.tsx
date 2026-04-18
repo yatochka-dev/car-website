@@ -23,10 +23,24 @@ type Props = {
 }
 
 function resolveServerURL() {
+  if (typeof window !== 'undefined') {
+    try {
+      const referrerOrigin = document.referrer ? new URL(document.referrer).origin : ''
+
+      if (referrerOrigin) {
+        return referrerOrigin
+      }
+    } catch {
+      // Ignore malformed referrers and fall back to the current origin.
+    }
+
+    return window.location.origin
+  }
+
   return (
     process.env.NEXT_PUBLIC_PAYLOAD_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    (typeof window !== 'undefined' ? window.location.origin : '')
+    ''
   )
 }
 

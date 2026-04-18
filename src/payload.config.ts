@@ -47,6 +47,40 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      graphics: {
+        Icon: '/components/payload/admin-brand#AdminBrandIcon',
+        Logo: '/components/payload/admin-brand#AdminBrandLogo',
+      },
+    },
+    meta: {
+      titleSuffix: '- הבוטיק Admin',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          media: '(prefers-color-scheme: light)',
+          url: '/icon-dark-32x32.png',
+        },
+        {
+          rel: 'icon',
+          type: 'image/png',
+          sizes: '32x32',
+          media: '(prefers-color-scheme: dark)',
+          url: '/icon-light-32x32.png',
+        },
+        {
+          rel: 'apple-touch-icon',
+          url: '/apple-icon.png',
+        },
+      ],
+      openGraph: {
+        siteName: 'הבוטיק Admin',
+        title: 'הבוטיק Admin',
+        description: 'Administrative workspace for the boutique car rental site.',
+      },
+    },
     livePreview: {
       url: ({ globalConfig }) =>
         globalConfig
