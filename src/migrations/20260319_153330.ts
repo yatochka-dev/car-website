@@ -1,6 +1,6 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TABLE "fleet_vehicles_rels" (
   	"id" serial PRIMARY KEY NOT NULL,
@@ -22,7 +22,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "fleet_vehicles" DROP COLUMN "image";`)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    DROP TABLE "fleet_vehicles_rels" CASCADE;
   ALTER TABLE "fleet_vehicles_bookings" ADD COLUMN "start_date" timestamp(3) with time zone NOT NULL;

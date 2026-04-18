@@ -11,7 +11,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '../ui/carousel'
-import { log } from 'console'
 
 interface FleetCardProps {
   vehicle: FleetVehicle
@@ -45,8 +44,6 @@ function checkAvailability(
 
   for (const booking of bookings ?? []) {
     const bookingDate = normalizeDate(booking.date)
-    console.log(selectedDate)
-    console.log(bookingDate)
 
     if (selectedDate === bookingDate) {
       return false
