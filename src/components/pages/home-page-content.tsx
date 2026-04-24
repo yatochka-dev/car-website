@@ -17,7 +17,7 @@ export function HomePageContent({ data }: Props) {
       <FleetSection {...data.homeFleet} />
       <ServiceSection {...data.homeService} />
       <TestimonialsSection {...data.homeTestimonials} />
-      <ContactSection contact={data.contactSettings} submitted={false} />
+      <ContactSection contact={data.contactSettings} />
     </>
   )
 }

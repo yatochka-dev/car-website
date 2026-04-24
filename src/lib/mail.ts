@@ -33,13 +33,13 @@ function buildMessageLines({
   submitterName,
 }: Omit<ContactNotificationArgs, 'adminEmails' | 'brandName'>) {
   return [
-    `Name: ${submitterName}`,
-    `Phone: ${phone}`,
-    date ? `Requested date: ${date}` : null,
-    siteURL ? `Site: ${siteURL}` : null,
+    `שם מלא: ${submitterName}`,
+    `טלפון: ${phone}`,
+    date ? `תאריך מועדף: ${date}` : null,
+    siteURL ? `אתר: ${siteURL}` : null,
     '',
-    'Message:',
-    message || 'No message provided.',
+    'הודעה:',
+    message || 'לא הוזנה הודעה.',
   ].filter(Boolean) as string[]
 }
 
@@ -55,14 +55,14 @@ export async function sendContactFormNotification({
   const apiKey = process.env.RESEND_KEY?.trim()
 
   if (!apiKey) {
-    throw new Error('Missing email provider API key')
+    throw new Error('חסר מפתח API לשליחת אימייל')
   }
 
   if (!adminEmails.length) {
-    throw new Error('No admin email recipients found')
+    throw new Error('לא נמצאו כתובות אימייל לשליחת ההתראה')
   }
 
-  const subject = `New contact form submission - ${brandName}`
+  const subject = `פנייה חדשה מהאתר - ${brandName}`
   const lines = buildMessageLines({
     date,
     message,
@@ -72,27 +72,27 @@ export async function sendContactFormNotification({
   })
 
   const html = `
-    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
-      <h2 style="margin-bottom:16px;">New contact form submission</h2>
+    <div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.6;color:#111827;text-align:right">
+      <h2 style="margin-bottom:16px;">פנייה חדשה מטופס יצירת הקשר</h2>
       <table style="border-collapse:collapse;width:100%;max-width:640px;">
         <tbody>
-          <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>Name</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(submitterName)}</td></tr>
-          <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>Phone</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(phone)}</td></tr>
+          <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>שם מלא</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(submitterName)}</td></tr>
+          <tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>טלפון</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(phone)}</td></tr>
           ${
             date
-              ? `<tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>Requested date</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(date)}</td></tr>`
+              ? `<tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>תאריך מועדף</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(date)}</td></tr>`
               : ''
           }
           ${
             siteURL
-              ? `<tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>Site</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(siteURL)}</td></tr>`
+              ? `<tr><td style="padding:8px 12px;border:1px solid #e5e7eb;"><strong>אתר</strong></td><td style="padding:8px 12px;border:1px solid #e5e7eb;">${escapeHtml(siteURL)}</td></tr>`
               : ''
           }
         </tbody>
       </table>
       <div style="margin-top:16px;">
-        <strong>Message</strong>
-        <p style="white-space:pre-wrap;">${escapeHtml(message || 'No message provided.')}</p>
+        <strong>הודעה</strong>
+        <p style="white-space:pre-wrap;">${escapeHtml(message || 'לא הוזנה הודעה.')}</p>
       </div>
     </div>
   `.trim()
@@ -117,8 +117,8 @@ export async function sendContactFormNotification({
   const data = (await response.json()) as SendEmailResponse
 
   if (!response.ok) {
-    const details = data.message || data.name || 'Unknown error'
-    throw new Error(`Email delivery error: ${details}`)
+    const details = data.message || data.name || 'שגיאה לא ידועה'
+    throw new Error(`שגיאה בשליחת האימייל: ${details}`)
   }
 
   return data

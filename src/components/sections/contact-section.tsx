@@ -1,16 +1,14 @@
-import Link from 'next/link'
-import { Mail, MapPin, Phone, Send } from 'lucide-react'
+import { Mail, MapPin, Phone } from 'lucide-react'
 
-import { submitContactForm } from '@/app/actions/contact'
+import { ContactForm } from '@/components/sections/contact-form'
 import { SectionHeading } from '@/components/ui/section-heading'
 import type { ContactSettingsData } from '@/lib/site-globals'
 
 type ContactSectionProps = {
   contact: ContactSettingsData
-  submitted?: boolean
 }
 
-export function ContactSection({ contact, submitted = false }: ContactSectionProps) {
+export function ContactSection({ contact }: ContactSectionProps) {
   return (
     <section id="contact" className="bg-surface py-24 md:py-32">
       <div className="container mx-auto px-4">
@@ -55,53 +53,7 @@ export function ContactSection({ contact, submitted = false }: ContactSectionPro
             </a>
           </div>
 
-          <form
-            action={submitContactForm}
-            className="flex flex-col gap-5 rounded-xl border border-border bg-card p-8"
-          >
-            <FormField label="שם מלא" id="name" name="name" type="text" required />
-            <FormField label="טלפון" id="contact-phone" name="phone" type="tel" required />
-            <FormField label="תאריך" id="date" name="date" type="date" />
-
-            <div className="flex flex-col gap-2">
-              <label htmlFor="message" className="text-sm font-medium text-foreground/80">
-                הודעה
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={4}
-                className="w-full resize-none rounded-lg border border-border bg-input px-4 py-3 text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
-                placeholder="ספרו לנו על האירוע שלכם..."
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="flex items-center justify-center gap-2 rounded-lg bg-primary py-4 font-semibold text-primary-foreground transition-all duration-300 hover:bg-gold-light"
-            >
-              <Send className="h-4 w-4" />
-              <span>שליחה</span>
-            </button>
-
-            <p className="text-muted-foreground">
-              שליחת הטופס מהווה הסכמה ל־
-              <Link href="/use" className="underline">
-                תנאי השימוש
-              </Link>{' '}
-              ול־
-              <Link href="/privacy" className="underline">
-                מדיניות הפרטיות של האתר
-              </Link>
-              .
-            </p>
-
-            {submitted && (
-              <p className="text-center text-sm font-medium text-primary">
-                ההודעה נשלחה בהצלחה! נחזור אליכם בהקדם.
-              </p>
-            )}
-          </form>
+          <ContactForm />
         </div>
       </div>
     </section>
@@ -142,34 +94,4 @@ function ContactInfoItem({
   }
 
   return content
-}
-
-function FormField({
-  label,
-  id,
-  name,
-  type,
-  required,
-}: {
-  label: string
-  id: string
-  name: string
-  type: string
-  required?: boolean
-}) {
-  return (
-    <div className="flex flex-col gap-2 w-full">
-      <label htmlFor={id} className="text-sm font-medium text-foreground/80">
-        {label}
-        {required && <span className="mr-1 text-primary">*</span>}
-      </label>
-      <input
-        id={id}
-        name={name}
-        type={type}
-        required={required}
-        className="w-full rounded-lg border border-border bg-input px-4 py-3 text-foreground transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary"
-      />
-    </div>
-  )
 }
