@@ -84,9 +84,47 @@ This file is the baseline playbook for Payload CMS + Next.js projects that shoul
   - logo
   - icon
   - favicon metadata
+- Override admin metadata through `admin.meta`, not ad hoc document head hacks:
+  - title suffix
+  - icon links
+  - open graph name/title/description when the admin may be shared internally
 - Use `admin.components.graphics.Icon` and `Logo` instead of CSS hacks.
 - Keep admin branding backed by project assets in `public/`.
+- Prefer one shared canonical brand asset such as `public/favicon.ico` unless the admin explicitly needs separate artwork.
 - If the brand name is editable in content, pull it from a global where practical.
+- Keep the in-app logo and browser/favicon branding aligned so the old vendor mark is not still visible in one surface.
+- Remove Payload naming from visible admin branding in white-label projects unless the user explicitly wants co-branding.
+- Put admin-only brand components in a dedicated path such as `src/components/payload/`.
+- Keep admin navigation and generated plugin surfaces organized into intentional groups when the default grouping is noisy.
+- Set Payload admin i18n intentionally:
+  - choose a fallback language
+  - declare supported languages explicitly
+  - translate collection/global labels and descriptions instead of mixing languages by accident
+- Treat admin customization as a first-class deliverable, not a last-mile polish step.
+
+## Payload Admin Customization Checklist
+
+- White-label graphics:
+  - custom `admin.components.graphics.Icon`
+  - custom `admin.components.graphics.Logo`
+  - no visible Payload default mark in sidebar, header, or browser tab
+- Metadata:
+  - custom `admin.meta.titleSuffix`
+  - custom `admin.meta.icons`
+  - custom `admin.meta.openGraph` values when relevant
+- Localization:
+  - chosen `i18n.fallbackLanguage`
+  - explicit `i18n.supportedLanguages`
+  - translated admin labels, groups, and descriptions
+- Navigation polish:
+  - sensible admin groups for collections/globals
+  - sensible admin groups for plugin-generated collections when used
+- Live preview:
+  - explicit `admin.livePreview.url`
+  - explicit `admin.livePreview.globals` / collections scope
+  - explicit breakpoints that match real target devices
+- Generated code:
+  - regenerate and commit the admin import map after changing admin component paths
 
 ## Import Map Rules
 
@@ -98,7 +136,9 @@ This file is the baseline playbook for Payload CMS + Next.js projects that shoul
 ## Live Preview Rules
 
 - Use Payload live preview only when the preview route can resolve the exact document or section being edited.
+- For global-driven pages, prefer a preview URL that carries the edited global slug or equivalent document context.
 - Prefer origin detection from the real admin iframe/referrer over env-guessing for `serverURL`.
+- Define explicit preview breakpoints in the admin for the main device targets instead of leaving preview size implicit.
 - Keep live preview document-scoped unless there is a clear implementation for composed multi-source pages.
 - When previewing a global that renders collection data too, preview only the global slice and merge the stable collection data back in.
 

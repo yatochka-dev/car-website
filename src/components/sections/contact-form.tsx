@@ -4,7 +4,8 @@ import { useActionState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Send } from 'lucide-react'
 
-import { initialContactFormState, submitContactForm } from '@/app/actions/contact'
+import { initialContactFormState } from '@/app/actions/contact-state'
+import { submitContactForm } from '@/app/actions/contact'
 
 export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null)

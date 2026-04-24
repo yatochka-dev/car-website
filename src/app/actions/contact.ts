@@ -2,16 +2,7 @@
 
 import { payload } from '@/lib/p'
 import { sendContactFormNotification } from '@/lib/mail'
-
-export type ContactFormState = {
-  message: string
-  status: 'error' | 'idle' | 'success'
-}
-
-export const initialContactFormState: ContactFormState = {
-  message: '',
-  status: 'idle',
-}
+import type { ContactFormState } from '@/app/actions/contact-state'
 
 export async function submitContactForm(
   _prevState: ContactFormState,
