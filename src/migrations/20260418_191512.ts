@@ -39,7 +39,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
 
   CREATE TABLE "contact_settings" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"tg_chat_id" varchar DEFAULT '5918252925' NOT NULL,
+	"tg_chat_id" varchar DEFAULT '' NOT NULL,
   	"phone" varchar DEFAULT '+972500000000' NOT NULL,
   	"phone_display" varchar DEFAULT '050-000-0000' NOT NULL,
   	"whatsapp" varchar DEFAULT 'https://wa.me/972500000000' NOT NULL,

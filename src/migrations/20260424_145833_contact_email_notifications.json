@@ -2473,13 +2473,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "tg_chat_id": {
-          "name": "tg_chat_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
         "phone": {
           "name": "phone",
           "type": "varchar",
@@ -3148,6 +3141,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "3511434b-51ec-42e3-babb-e26428eca966",
+  "id": "22648453-979f-464b-8f2a-bd510b384c60",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

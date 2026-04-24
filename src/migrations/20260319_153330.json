@@ -1752,7 +1752,7 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": true,
-          "default": "'5918252925'"
+          "default": "''"
         },
         "brand_name": {
           "name": "brand_name",

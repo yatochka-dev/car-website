@@ -7,17 +7,10 @@ export const ContactSettings: GlobalConfig = {
   label: 'פרטי קשר',
   admin: {
     group: siteSettingsGroup,
-    description: 'פרטי התקשרות ויעד הטלגרם של פניות מהאתר.',
+    description: 'פרטי ההתקשרות המוצגים באתר והאימייל הראשי של העסק.',
   },
   access: defaultGlobalAccess,
   fields: [
-    {
-      name: 'tgChatId',
-      label: 'מזהה צ׳אט בטלגרם',
-      type: 'text',
-      required: true,
-      defaultValue: '5918252925',
-    },
     {
       name: 'phone',
       label: 'מספר טלפון',

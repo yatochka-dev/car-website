@@ -116,6 +116,40 @@ This file is the baseline playbook for Payload CMS + Next.js projects that shoul
 - Keep query and shaping logic in `src/lib`, not inside presentational components.
 - Avoid hidden dependencies where components know how to query their own CMS data.
 
+## Website Baseline
+
+- Every public site should include baseline legal and utility pages unless there is a documented reason not to:
+  - privacy policy
+  - terms of use / user agreement
+  - 404 / not found page
+  - sitemap
+  - robots rules
+- Legal and utility pages should be linked from obvious public UI, usually the footer and any data-collection form area.
+- Every site should ship with brand assets and metadata:
+  - favicon
+  - open graph metadata
+  - page titles and descriptions
+- Every site should also include technical SEO basics:
+  - canonical URL handling
+  - social share image
+  - robots directives aligned with the deployment environment
+  - structured data where the business/site type clearly benefits from it
+- Every site should include baseline trust and contact signals:
+  - visible business name
+  - phone / email / primary contact method
+  - clear location or service-area context when relevant
+- Every lead or contact flow should have:
+  - a clear success state
+  - a failure path that can be debugged
+  - delivery to a real operational inbox or notification channel
+- If a site collects user details, the form should reference the relevant legal pages near submit.
+- If analytics, ads, or tracking are used, add consent handling appropriate to the jurisdiction and traffic profile.
+- Every site should meet a minimum accessibility baseline:
+  - language set correctly
+  - keyboard-accessible navigation and forms
+  - meaningful alt text for content images
+  - sufficient color contrast for core flows
+
 ## Validation Workflow
 
 - After schema changes, run `pnpm run generate:types`.

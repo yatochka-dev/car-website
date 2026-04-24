@@ -696,14 +696,13 @@ export interface SiteShell {
   createdAt?: string | null;
 }
 /**
- * פרטי התקשרות ויעד הטלגרם של פניות מהאתר.
+ * פרטי ההתקשרות המוצגים באתר והאימייל הראשי של העסק.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-settings".
  */
 export interface ContactSetting {
   id: number;
-  tgChatId: string;
   phone: string;
   phoneDisplay: string;
   whatsapp: string;
@@ -843,7 +842,6 @@ export interface SiteShellSelect<T extends boolean = true> {
  * via the `definition` "contact-settings_select".
  */
 export interface ContactSettingsSelect<T extends boolean = true> {
-  tgChatId?: T;
   phone?: T;
   phoneDisplay?: T;
   whatsapp?: T;

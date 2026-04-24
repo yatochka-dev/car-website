@@ -151,7 +151,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE "site_config" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"tg_chat_id" varchar DEFAULT '5918252925' NOT NULL,
+	"tg_chat_id" varchar DEFAULT '' NOT NULL,
   	"brand_name" varchar DEFAULT 'הבוטיק' NOT NULL,
   	"brand_tagline" varchar DEFAULT 'השכרת רכבי יוקרה' NOT NULL,
   	"contact_phone" varchar DEFAULT '+972500000000' NOT NULL,

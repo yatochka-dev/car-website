@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 
 import { payload } from '@/lib/p'
-import { sendTelegramMessage } from '@/lib/tg'
+import { sendContactFormNotification } from '@/lib/mail'
 
 export async function submitContactForm(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim()
@@ -15,21 +15,43 @@ export async function submitContactForm(formData: FormData) {
     throw new Error('חובה למלא שם וטלפון')
   }
 
-  const details = [
-    'פניית קשר חדשה',
-    `שם: *${name}*`,
-    `טלפון: *${phone}*`,
-    date ? `תאריך: ${date}` : null,
-    '',
-    `\`\`\`${message}\`\`\``,
-  ]
-    .filter(Boolean)
-    .join('\n')
-
   const p = await payload()
-  const contactSettings = await p.findGlobal({ slug: 'contact-settings' })
 
-  await sendTelegramMessage(details, process.env.TG_TOKEN as string, contactSettings.tgChatId)
+  const [siteShell, usersResult] = await Promise.all([
+    p.findGlobal({
+      slug: 'site-shell',
+      depth: 0,
+      select: {
+        brand: true,
+      },
+    }),
+    p.find({
+      collection: 'users',
+      depth: 0,
+      limit: 1000,
+      select: {
+        email: true,
+      },
+    }),
+  ])
+
+  const adminEmails = Array.from(
+    new Set(
+      usersResult.docs
+        .map((user) => user.email?.trim().toLowerCase())
+        .filter((email): email is string => Boolean(email)),
+    ),
+  )
+
+  await sendContactFormNotification({
+    adminEmails,
+    brandName: siteShell.brand.name,
+    date: date || null,
+    message: message || null,
+    phone,
+    siteURL: process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_PAYLOAD_URL || null,
+    submitterName: name,
+  })
 
   redirect('/?contactSubmitted=1#contact')
 }
